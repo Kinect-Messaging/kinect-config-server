@@ -12,4 +12,7 @@ spring:
           git.clone-on-start: true
           refreshRate: 60
           ignoreLocalSshSettings: true
-          privateKey: ${GIT_PRIVATE_KEY}
+          privateKey: |
+            -----BEGIN RSA PRIVATE KEY-----
+            ${GIT_PRIVATE_KEY}
+            -----END RSA PRIVATE KEY-----
