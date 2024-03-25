@@ -4,8 +4,7 @@ WORKDIR /workspace/app
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
-COPY libs libs/
-COPY apps apps/
+COPY src src
 
 RUN ./mvnw install -DskipTests
 
