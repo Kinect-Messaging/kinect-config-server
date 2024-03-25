@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: kinect-config-server
+  profiles:
+    active: git
+  cloud:
+    config:
+      server:
+        git:
+          default-label: dev
+          uri: git@github.com:Kinect-Messaging/kinect-config.git
+          git.clone-on-start: true
+          refreshRate: 60
+          ignoreLocalSshSettings: true
+          privateKey: ${GIT_PRIVATE_KEY}
