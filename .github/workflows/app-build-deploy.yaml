@@ -77,7 +77,7 @@ jobs:
         uses: docker/metadata-action@v5 # v5.0.0
         env:
           # github.repository as <account>/<repo>
-          IMAGE_NAME: ${{ github.repository }}/${{ env.APP_NAME }}
+          IMAGE_NAME: ${{ github.repository }}
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
