@@ -136,6 +136,7 @@ jobs:
       SEGMENT_DOWNLOAD_TIMEOUT_MINS: '5' #Specify timeout in minutes. Default is 10 minutes.
       # Use docker.io for Docker Hub if empty
       REGISTRY: ghcr.io
+      CONTAINER_NAME: kinect-config-server
     steps:
       # Login to Azure
       - name: Azure login
@@ -150,6 +151,6 @@ jobs:
           registryUsername: ${{ github.actor }}
           registryPassword: ${{ secrets.KINECTCONFIG_REGISTRY_PASSWORD }}
           imageToDeploy: ${{ needs.build.outputs.docker-tag }}
-          containerAppName: ${{ env.APP_NAME }}
+          containerAppName: ${{ env.CONTAINER_NAME }}
           resourceGroup: dev-apps-rg
           containerAppEnvironment: development
