@@ -148,7 +148,7 @@ jobs:
         with:
           registryUrl: ${{ env.REGISTRY }}
           registryUsername: ${{ github.actor }}
-          registryPassword: ${{ secrets.GITHUB_TOKEN }}
+          registryPassword: ${{ secrets.KINECTCONFIG_REGISTRY_PASSWORD }}
           imageToDeploy: ${{ needs.build.outputs.docker-tag }}
           containerAppName: ${{ env.APP_NAME }}
           resourceGroup: dev-apps-rg
