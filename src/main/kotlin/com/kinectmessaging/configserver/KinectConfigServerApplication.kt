@@ -1,4 +1,4 @@
-package com.kinect.messaging.kinectconfigserver
+package com.kinectmessaging.configserver
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

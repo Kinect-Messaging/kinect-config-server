@@ -20,7 +20,7 @@ RUN addgroup -S dgroup && adduser -S duser -G dgroup
 USER duser
 
 ARG EXTRACTED=/workspace/app/target/extracted
-ARG DESCRIPTION="Container for Kinect Messaging"
+ARG DESCRIPTION="Spring Config Server for Kinect Messaging"
 LABEL org.opencontainers.image.description = ${DESCRIPTION}
 COPY --from=build ${EXTRACTED}/dependencies/ ./
 COPY --from=build ${EXTRACTED}/spring-boot-loader/ ./

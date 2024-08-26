@@ -15,7 +15,7 @@ on:
       - 'Dockerfile'
       - '.github/workflows/app-build-deploy.yaml'
 jobs:
-  project-build:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -29,6 +29,8 @@ jobs:
       # Use docker.io for Docker Hub if empty
       REGISTRY: ghcr.io
       APP_NAME: kinect-config-server
+    outputs:
+      docker-tag:  ${{ steps.meta.outputs.tags }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 17
@@ -36,7 +38,7 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-#          cache: 'maven'
+          #          cache: 'maven'
           #        cache-dependency-path: 'sub-project/pom.xml' # optional
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
@@ -45,19 +47,13 @@ jobs:
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@v3.3.0
-        with:
-          cosign-release: 'v2.1.1'
+        uses: sigstore/cosign-installer@v3.6.0
 
       # Set up BuildKit Docker container builder to be able to build
       # multi-platform images and export cache
       # https://github.com/docker/setup-buildx-action
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3 # v3.0.0
-
-      # Setup Pack CLI for building containers using buildpack
-#      - name: Install pack CLIs including pack and yq
-#        uses: buildpacks/github-actions/setup-pack@v5.0.0
 
 
       # Login against a Docker registry except on PR
@@ -86,6 +82,12 @@ jobs:
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
 
+      # Generate spring config file
+      - name: Generate Config
+        id: generate-config
+        run: |
+          echo ${{ secrets.DEV_SPRING_CONFIG}} | base64 -d > src/main/resources/application.yaml
+
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
@@ -113,14 +115,33 @@ jobs:
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
-        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+        run: |
+          echo "${TAGS}" 
+          images=""
+          for tag in ${TAGS}; do
+            images+="${tag}@${DIGEST} "
+          done
+          cosign sign --yes ${images}
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
 
+    env:
+      SEGMENT_DOWNLOAD_TIMEOUT_MINS: '5' #Specify timeout in minutes. Default is 10 minutes.
+      # Use docker.io for Docker Hub if empty
+      REGISTRY: ghcr.io
+    steps:
       # Login to Azure
-      - name: Login via Azure CLI
+      - name: Azure login
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
 
       - name: Deploy to Dev Container App
         uses: azure/container-apps-deploy-action@v2
@@ -128,23 +149,7 @@ jobs:
           registryUrl: ${{ env.REGISTRY }}
           registryUsername: ${{ github.actor }}
           registryPassword: ${{ secrets.GITHUB_TOKEN }}
-          imageToDeploy: ${{ steps.meta.outputs.tags }}
-          containerAppName: kinect-${{ env.APP_NAME }}
+          imageToDeploy: ${{ needs.build.outputs.docker-tag }}
+          containerAppName: ${{ env.APP_NAME }}
           resourceGroup: dev-apps-rg
           containerAppEnvironment: development
-
-      # Extract version information from project to use as image tag
-#      - name: Set the version
-#        run: |
-#          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-#          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-#      - name: Build app with pack CLI
-#        id: build-and-push
-#        run: |
-#          pack build ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG_VERSION }} \
-#          --builder paketobuildpacks/builder:base \
-#          --env BP_MAVEN_BUILT_MODULE=apps/config \
-#          --cache-image ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.TAG_VERSION }} \
-##          --volume "$(pwd)/appinsights:/platform/bindings/application-insights" \
-#          --publish

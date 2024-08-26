@@ -1,4 +1,4 @@
-package com.kinect.messaging.kinectconfigserver
+package com.kinectmessaging.configserver
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
