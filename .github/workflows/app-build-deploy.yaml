@@ -90,7 +90,7 @@ jobs:
       - name: Generate Config
         id: generate-config
         run: |
-          echo ${{ secrets.ENV_CONFIG}} | base64 -d > src/main/resources/application.yaml
+          echo ${{ secrets.ENV_CONFIG }} | base64 -d > src/main/resources/application.yaml
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
