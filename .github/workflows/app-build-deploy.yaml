@@ -9,18 +9,14 @@ on:
     branches: [ main ]
     paths:
       - 'src/**'
-      - 'Dockerfile'
       - '.github/workflows/app-build-deploy.yaml'
-      - 'deploy/main.bicep'
-      - 'deploy/main.parameters.bicep'
+      - 'deploy/**'
   push:
     branches: [ main ]
     paths:
       - 'src/**'
-      - 'Dockerfile'
       - '.github/workflows/app-build-deploy.yaml'
-      - 'deploy/main.bicep'
-      - 'deploy/main.parameters.bicep'
+      - 'deploy/**'
 jobs:
   build:
     runs-on: ubuntu-latest
