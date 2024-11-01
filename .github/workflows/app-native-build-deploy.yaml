@@ -37,6 +37,13 @@ jobs:
       docker-tag:  ${{ steps.meta.outputs.tags }}
     steps:
       - uses: actions/checkout@v4
+
+      # Generate spring config file
+      - name: Generate Config
+        id: generate-config
+        run: |
+          echo ${{ secrets.ENV_CONFIG }} | base64 -d > src/main/resources/application.yaml
+
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
@@ -46,12 +53,6 @@ jobs:
           #        cache-dependency-path: 'sub-project/pom.xml' # optional
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
-
-      # Generate spring config file
-      - name: Generate Config
-        id: generate-config
-        run: |
-          echo ${{ secrets.ENV_CONFIG }} | base64 -d > src/main/resources/application.yaml
 
       # Build Application using Maven
       - name: Build with Maven
