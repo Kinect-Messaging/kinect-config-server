@@ -42,6 +42,7 @@ jobs:
       - name: Generate Config
         id: generate-config
         run: |
+          ls -ltr
           echo ${{ secrets.ENV_CONFIG }} | base64 -d > src/main/resources/application.yaml
 
       - name: Set up JDK
