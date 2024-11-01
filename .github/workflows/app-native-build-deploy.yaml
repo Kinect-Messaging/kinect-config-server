@@ -10,12 +10,14 @@ on:
     paths:
       - 'src/**'
       - '.github/workflows/app-build-deploy.yaml'
+      - '.github/workflows/app-native-build-deploy.yaml'
       - 'deploy/**'
   push:
     branches: [ main ]
     paths:
       - 'src/**'
       - '.github/workflows/app-build-deploy.yaml'
+      - '.github/workflows/app-native-build-deploy.yaml'
       - 'deploy/**'
 jobs:
   build:
