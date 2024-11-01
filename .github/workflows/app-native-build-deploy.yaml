@@ -41,10 +41,8 @@ jobs:
       # Generate spring config file
       - name: Generate Config
         id: generate-config
-        env:
-          CONFIG: ${{ secrets.ENV_CONFIG }}
         run: |
-          echo ${{ env.CONFIG }} | base64 -d > src/main/resources/application.yaml
+          echo ${{ secrets.ENV_CONFIG }} | base64 -d > src/main/resources/application.yaml
 
       - name: Set up JDK
         uses: actions/setup-java@v4
