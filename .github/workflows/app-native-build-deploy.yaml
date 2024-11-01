@@ -140,7 +140,7 @@ jobs:
           echo "${TAGS}" 
           images=""
           for tag in ${TAGS}; do
-            images+="${tag}@${DIGEST} "
+            images+="${tag}"
           done
           cosign sign --yes ${images}
 
