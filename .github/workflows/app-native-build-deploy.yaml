@@ -122,16 +122,16 @@ jobs:
         id: build-and-push
         run: |
           pack build ${{ steps.meta.outputs.tags }} \
-            --builder paketobuildpacks/builder-jammy-tiny \
-            --path target/*.jar \
-            --env 'BP_NATIVE_IMAGE=true' \ 
-            --env 'BP_JVM_VERSION=23' \
-            --env 'BP_SPRING_AOT_ENABLED=true' \
-            --env 'BPL_SPRING_AOT_ENABLED=true' \
-            --env 'JAVA_TOOL_OPTIONS=-Dspring.aot.enabled=true' \
-            --env 'BP_NATIVE_IMAGE_BUILD_ARGUMENTS=-H:-AddAllFileSystemProviders --strict-image-heap --initialize-at-build-time=org.bouncycastle --initialize-at-build-time=net.i2p.crypto.eddsa.EdDSASecurityProvider --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$Default --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$NonceAndIV'
-            --cache-image ${{ steps.meta.outputs.tags }} \
-            --publish
+          --builder paketobuildpacks/builder-jammy-tiny \
+          --path target/*.jar \
+          --env 'BP_NATIVE_IMAGE=true' \ 
+          --env 'BP_JVM_VERSION=23' \
+          --env 'BP_SPRING_AOT_ENABLED=true' \
+          --env 'BPL_SPRING_AOT_ENABLED=true' \
+          --env 'JAVA_TOOL_OPTIONS=-Dspring.aot.enabled=true' \
+          --env 'BP_NATIVE_IMAGE_BUILD_ARGUMENTS=-H:-AddAllFileSystemProviders --strict-image-heap --initialize-at-build-time=org.bouncycastle --initialize-at-build-time=net.i2p.crypto.eddsa.EdDSASecurityProvider --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$Default --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$NonceAndIV'
+          --cache-image ${{ steps.meta.outputs.tags }} \
+          --publish
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
