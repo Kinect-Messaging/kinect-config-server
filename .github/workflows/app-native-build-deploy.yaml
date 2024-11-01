@@ -44,8 +44,6 @@ jobs:
         env:
           CONFIG: ${{ secrets.ENV_CONFIG }}
         run: |
-          ls -ltr
-          echo 'dGVzdCBzdHJpbmc=' | base64 -d
           echo ${{ env.CONFIG }} | base64 -d > src/main/resources/application.yaml
 
       - name: Set up JDK
