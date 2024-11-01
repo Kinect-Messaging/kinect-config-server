@@ -119,9 +119,9 @@ jobs:
         id: build-and-push
         env:
           # github.repository as <account>/<repo>
-          IMAGE_NAME: ${{ github.repository }}
+          IMAGE_NAME: ${{ env.REGISTRY }}/${{ github.repository }}
         run: |
-          pack build ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }} \ 
+          pack build ${{ env.IMAGE_NAME }} \ 
               --builder paketobuildpacks/builder-jammy-tiny \
               --tag ${{ steps.meta.outputs.tags }}
               --path target/${{ env.IMAGE_NAME }}-*.jar \
