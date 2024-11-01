@@ -138,11 +138,11 @@ jobs:
         # against the sigstore community Fulcio instance.
         run: |
           echo "${TAGS}" 
-          images=""
-          for tag in ${TAGS}; do
-            images+="${tag}"
-          done
-          cosign sign --yes ${images}
+#          images=""
+#          for tag in ${TAGS}; do
+#            images+="${tag}"
+#          done
+#          cosign sign --yes ${images}
 
 
   # This job is used for linting the bicep files

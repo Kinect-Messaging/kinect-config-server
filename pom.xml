@@ -138,8 +138,6 @@
 						<artifactId>native-maven-plugin</artifactId>
 						<!--<version>0.9.28</version>-->
 						<configuration>
-							<verbose>true</verbose>
-							<quickBuild>true</quickBuild>
 							<buildArgs combine.children="append">
 								<arg>-H:+ReportExceptionStackTraces</arg>
 							</buildArgs>
