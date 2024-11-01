@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk-alpine as build
+FROM container-registry.oracle.com/graalvm/native-image:21-ol8 AS build
 WORKDIR /workspace/app
 
 COPY ../mvnw .

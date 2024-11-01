@@ -6,6 +6,7 @@ target/
 
 ### Kinect Messaging ###
 **/azure-client-secrets.json
+deploy/body.json
 
 ### STS ###
 .apt_generated
@@ -21,6 +22,7 @@ target/
 *.iws
 *.iml
 *.ipr
+out
 
 ### NetBeans ###
 /nbproject/private/
