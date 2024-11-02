@@ -146,7 +146,7 @@ jobs:
         # against the sigstore community Fulcio instance.
         run: |
           echo "${TAGS}" 
-          echo "DIGEST=$(docker buildx imagetools inspect ${{ steps.meta.outputs.tags }} --format '{{json .Manifest}}' | jq -r '.digest')" >> $GITHUB_ENV
+          export DIGEST=$(docker buildx imagetools inspect ${{ steps.meta.outputs.tags }} --format '{{json .Manifest}}' | jq -r '.digest')"
           echo "${DIGEST}"
           images=""
           for tag in ${TAGS}; do
