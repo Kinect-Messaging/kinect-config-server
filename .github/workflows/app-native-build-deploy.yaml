@@ -147,6 +147,7 @@ jobs:
         # against the sigstore community Fulcio instance.
         run: |
           echo "${TAGS}" 
+          echo "${DIGEST}"
 #          images=""
 #          for tag in ${TAGS}; do
 #            images+="${tag}"
