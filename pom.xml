@@ -69,32 +69,6 @@
 		<testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
 		<plugins>
 			<plugin>
-				<groupId>org.graalvm.buildtools</groupId>
-				<artifactId>native-maven-plugin</artifactId>
-				<configuration>
-					<classesDirectory>${project.build.outputDirectory}</classesDirectory>
-					<metadataRepository>
-						<enabled>true</enabled>
-					</metadataRepository>
-					<buildArgs>
-						<buildArg>-H:-AddAllFileSystemProviders</buildArg>
-						<buildArg>--strict-image-heap</buildArg>
-						<buildArg>--initialize-at-build-time=org.bouncycastle</buildArg>
-						<buildArg>--initialize-at-build-time=net.i2p.crypto.eddsa.EdDSASecurityProvider</buildArg>
-						<buildArg>--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$Default</buildArg>
-						<buildArg>--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$NonceAndIV</buildArg>
-					</buildArgs>
-				</configuration>
-				<executions>
-					<execution>
-						<id>native</id>
-						<goals>
-							<goal>compile-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<executions>
@@ -134,14 +108,55 @@
 			<build>
 				<plugins>
 					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<configuration>
+							<image>
+								<env>
+									<BP_JVM_VERSION>23</BP_JVM_VERSION>
+									<BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
+									<BP_SPRING_AOT_ENABLED>true</BP_SPRING_AOT_ENABLED>
+									<BPL_SPRING_AOT_ENABLED>true</BPL_SPRING_AOT_ENABLED>
+									<JAVA_TOOL_OPTIONS>-Dspring.aot.enabled=true -DskipTests</JAVA_TOOL_OPTIONS>
+									<BP_NATIVE_IMAGE_BUILD_ARGUMENTS>-H:-AddAllFileSystemProviders --strict-image-heap --initialize-at-build-time=org.bouncycastle --initialize-at-build-time=net.i2p.crypto.eddsa.EdDSASecurityProvider --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$Default --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$NonceAndIV</BP_NATIVE_IMAGE_BUILD_ARGUMENTS>
+								</env>
+							</image>
+						</configuration>
+						<executions>
+							<execution>
+								<id>process-aot</id>
+								<goals>
+									<goal>process-aot</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
 						<groupId>org.graalvm.buildtools</groupId>
 						<artifactId>native-maven-plugin</artifactId>
-						<!--<version>0.9.28</version>-->
 						<configuration>
-							<buildArgs combine.children="append">
-								<arg>-H:+ReportExceptionStackTraces</arg>
+							<classesDirectory>${project.build.outputDirectory}</classesDirectory>
+							<metadataRepository>
+								<enabled>true</enabled>
+							</metadataRepository>
+							<buildArgs>
+								<buildArg>-H:-AddAllFileSystemProviders</buildArg>
+								<buildArg>--strict-image-heap</buildArg>
+								<buildArg>--initialize-at-build-time=org.bouncycastle</buildArg>
+								<buildArg>--initialize-at-build-time=net.i2p.crypto.eddsa.EdDSASecurityProvider</buildArg>
+								<buildArg>--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$Default</buildArg>
+								<buildArg>--initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$NonceAndIV</buildArg>
 							</buildArgs>
 						</configuration>
+						<executions>
+							<execution>
+								<id>native</id>
+								<goals>
+									<goal>compile-no-fork</goal>
+								</goals>
+								<phase>package</phase>
+							</execution>
+						</executions>
 					</plugin>
 				</plugins>
 			</build>

@@ -56,10 +56,6 @@ jobs:
           server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }} # location for the settings.xml file
 
-      # Build Application using Maven
-      - name: Build with Maven
-        run: mvn --batch-mode clean package -DskipTests -Pnative
-
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
       - name: Install cosign
@@ -100,8 +96,8 @@ jobs:
             type=semver,pattern={{major}}.{{minor}}
 
       # Install pack cli
-      - name: Install Pack CLI
-        uses: buildpacks/github-actions/setup-pack@v5.0.0
+#      - name: Install Pack CLI
+#        uses: buildpacks/github-actions/setup-pack@v5.0.0
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -117,11 +113,16 @@ jobs:
 #          cache-from: type=gha
 #          cache-to: type=gha,mode=max
 
-      # Build and push docker image with pack cli
-      - name: Build app with pack CLI
+      # Build Application using Maven
+      - name: Build and push docker image with Maven
         id: build-and-push
-        run: |
-          pack build ${{ steps.meta.outputs.tags }} --builder paketobuildpacks/builder-jammy-tiny --path target/*.jar --env 'BP_NATIVE_IMAGE=true' --env 'BP_JVM_VERSION=23' --env 'BP_SPRING_AOT_ENABLED=true' --env 'BPL_SPRING_AOT_ENABLED=true' --env 'JAVA_TOOL_OPTIONS=-Dspring.aot.enabled=true' --env 'BP_NATIVE_IMAGE_BUILD_ARGUMENTS=-H:-AddAllFileSystemProviders --strict-image-heap --initialize-at-build-time=org.bouncycastle --initialize-at-build-time=net.i2p.crypto.eddsa.EdDSASecurityProvider --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$Default --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$NonceAndIV' --cache-image ${{ steps.meta.outputs.tags }} --publish
+        run: mvn --batch-mode spring-boot:build-image -Pnative -DskipTests -Dspring-boot.build-image.imageName=${{ steps.meta.outputs.tags }} -Dspring-boot.build-image.publish=true
+
+      # Build and push docker image with pack cli
+#      - name: Build app with pack CLI
+#        id: build-and-push
+#        run: |
+#          pack build ${{ steps.meta.outputs.tags }} --builder paketobuildpacks/builder-jammy-tiny --path target/*.jar --env 'BP_NATIVE_IMAGE=true' --env 'BP_JVM_VERSION=23' --env 'BP_SPRING_AOT_ENABLED=true' --env 'BPL_SPRING_AOT_ENABLED=true' --env 'JAVA_TOOL_OPTIONS=-Dspring.aot.enabled=true' --env 'BP_NATIVE_IMAGE_BUILD_ARGUMENTS=-H:-AddAllFileSystemProviders --strict-image-heap --initialize-at-build-time=org.bouncycastle --initialize-at-build-time=net.i2p.crypto.eddsa.EdDSASecurityProvider --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$Default --initialize-at-run-time=org.bouncycastle.jcajce.provider.drbg.DRBG$NonceAndIV' --cache-image ${{ steps.meta.outputs.tags }} --publish
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker
