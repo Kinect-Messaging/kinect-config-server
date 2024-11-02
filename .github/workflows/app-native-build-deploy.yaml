@@ -116,7 +116,15 @@ jobs:
       # Build Application using Maven
       - name: Build and push docker image with Maven
         id: build-and-push
-        run: mvn --batch-mode spring-boot:build-image -Pnative -DskipTests -Dspring-boot.build-image.imageName=${{ steps.meta.outputs.tags }} -Dspring-boot.build-image.publish=true
+        run: |
+          mvn --batch-mode spring-boot:build-image \
+          -Pnative,publish \
+          -DskipTests \
+          -Ddocker.publishRegistry.username=${{ github.actor }} \
+          -Ddocker.publishRegistry.password=${{ secrets.GITHUB_TOKEN }} \
+          -Ddocker.publishRegistry.url=${{ env.REGISTRY }} \
+          -Dspring-boot.build-image.publish=true \
+          -Dspring-boot.build-image.imageName=${{ steps.meta.outputs.tags }}
 
       # Build and push docker image with pack cli
 #      - name: Build app with pack CLI
