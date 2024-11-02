@@ -142,17 +142,17 @@ jobs:
         env:
           # https://docs.github.com/en/actions/security-guides/security-hardening-for-github-actions#using-an-intermediate-environment-variable
           TAGS: ${{ steps.meta.outputs.tags }}
-          DIGEST: ${{ steps.build-and-push.outputs.digest }}
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: |
           echo "${TAGS}" 
+          echo "DIGEST=$(docker buildx imagetools inspect ${{ steps.meta.outputs.tags }} --format '{{json .Manifest}}' | jq -r '.digest')" >> $GITHUB_ENV
           echo "${DIGEST}"
-#          images=""
-#          for tag in ${TAGS}; do
-#            images+="${tag}"
-#          done
-#          cosign sign --yes ${images}
+          images=""
+          for tag in ${TAGS}; do
+            images+="${tag}@${DIGEST}"
+          done
+          cosign sign --yes ${images}
 
 
   # This job is used for linting the bicep files
