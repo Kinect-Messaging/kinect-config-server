@@ -1,2 +1,2 @@
-# kinect-config-server
-Config server for Spring apps
+# Kinect Config Server
+Config server for Spring and quarkus apps
